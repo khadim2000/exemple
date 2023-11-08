@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+    <body>
+      <h1>Tisseo API Challenge</h1>
+      <button id="getLines">Get Lines</button>
+      <ul id="lines-list"></ul>
+      <ul id="stops-list"></ul>
+      <ul id="proche-list"> </ul>
+      <ul id="para"></ul>
+    
+  
+      <script>
+        document.getElementById('getLines').addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+          xhr.open('GET', 'https://api.tisseo.fr/v2/lines.json?key=a3732a1074e2403ce364ad6e71eb998cb');
+  
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState==4 && xhr.status === 200) {
+              var lines = JSON.parse(this.responseText);
+              lines.lines.line.forEach(function(line) {
+                var li = document.createElement('li');
+                li.innerHTML = line.shortName
+                document.getElementById('lines-list').appendChild(li);
+                li.addEventListener('click', function() {
+                  xhr.open('GET', 'https://api.tisseo.fr/v2/stop_points.json?key=a3732a1074e2403ce364ad6e71eb998cb&lineId=' + line.id);
+  
+                  xhr.onreadystatechange = function() {
+                    if (xhr.readyState==4 && xhr.status === 200) {
+                      var response= JSON.parse(xhr.responseText);
+                      console.log(xhr.responseText)
+                      var physicalStops=""
+  
+                      response.physicalStops.physicalStop.forEach(function(physicalStop) {
+                        var li = document.createElement('li');
+                        li.innerHTML=physicalStop.name
+                       document.getElementById('stops-list').appendChild(li)
+                      li.addEventListener('click ', function() {
+                  xhr.open('GET', "https://api.tisseo.fr/v2/stops_schedules.json?key=a3732a1074e2403ce364ad6e71eb998cb&stopPointId=" +stop_point.id );
+  
+                  xhr.onreadystatechange = function() {
+                    if (xhr.readyState==4 && xhr.status === 200) {
+                      var response= JSON.parse(xhr.responseText);
+                      alert(response)
+                      var departures="";
+                      response.departures.departure.forEach(function(departure){
+                        var li = document.createElement('li');
+                        li.innerHTML=physicalStop.name
+                       document.getElementById('stops-list').appendChild(li)
+                      
+                    })
+                  
+                      };
+                      
+                    }
+              
+  
+                  xhr.send();
+                });
+               
+            
+              });
+              
+            }
+          }
+  
+          xhr.send();
+        });
+         });
+              
+            }
+          }
+  
+          xhr.send();
+        });
+        
+        
+      </script>
+    </body>
+  </html>
